@@ -38,7 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            element.textContent = Math.floor(progress * (end - start) + start) + '%';
+            
+            // 팀 리드만 '+' 기호를 붙이고, 나머지는 '%' 기호를 붙입니다
+            if (element.closest('.stat-item') && element.nextElementSibling.textContent === '팀 리드') {
+                element.textContent = Math.floor(progress * (end - start) + start) + '+';
+            } else {
+                element.textContent = Math.floor(progress * (end - start) + start) + '%';
+            }
+            
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             }
@@ -162,4 +169,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DOM 로드 시 슬라이더 초기화
     initTestimonialSlider();
+
+    // 스크롤 프로그레스 바 추가
+    const addScrollProgress = () => {
+        const progressBar = document.createElement('div');
+        progressBar.className = 'scroll-progress';
+        document.body.appendChild(progressBar);
+
+        window.addEventListener('scroll', () => {
+            const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / windowHeight);
+            progressBar.style.transform = `scaleX(${scrolled})`;
+        });
+    };
+
+    addScrollProgress();
 }); 
